@@ -71,18 +71,26 @@
 
 -(BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
     UIScrollView *scrollView = self.collectionView;
-    CGFloat scrollDelta = newBounds.origin.y - scrollView.bounds.origin.y;
+    CGFloat scrollDelta =self.scrollDirection == UICollectionViewScrollDirectionHorizontal?
+    (newBounds.origin.x - scrollView.bounds.origin.x):
+    (newBounds.origin.y - scrollView.bounds.origin.y);
     CGPoint touchLocation = [scrollView.panGestureRecognizer locationInView:scrollView];
-    
     for (UIAttachmentBehavior *spring in _animator.behaviors) {
         CGPoint anchorPoint = spring.anchorPoint;
-        CGFloat distanceFromTouch = fabsf(touchLocation.y - anchorPoint.y);
+        CGFloat distanceFromTouch = self.scrollDirection == UICollectionViewScrollDirectionHorizontal?
+        fabsf(touchLocation.x - anchorPoint.x):
+        fabsf(touchLocation.y - anchorPoint.y);
         CGFloat scrollResistance = distanceFromTouch / self.resistanceFactor;
         
         UICollectionViewLayoutAttributes *item = [spring.items firstObject];
         CGPoint center = item.center;
-        center.y += (scrollDelta > 0) ? MIN(scrollDelta, scrollDelta * scrollResistance)
-                                      : MAX(scrollDelta, scrollDelta * scrollResistance);
+        if (self.scrollDirection == UICollectionViewScrollDirectionHorizontal) {
+            center.x += (scrollDelta > 0) ? MIN(scrollDelta, scrollDelta * scrollResistance)
+            : MAX(scrollDelta, scrollDelta * scrollResistance);
+        }else
+            center.y += (scrollDelta > 0) ? MIN(scrollDelta, scrollDelta * scrollResistance)
+            : MAX(scrollDelta, scrollDelta * scrollResistance);
+        
         item.center = center;
         
         [_animator updateItemUsingCurrentState:item];
