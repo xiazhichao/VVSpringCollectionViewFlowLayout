@@ -34,6 +34,7 @@ static NSString *reuseId = @"collectionViewCellReuseId";
     
     self.layout = [[VVSpringCollectionViewFlowLayout alloc] init];
     self.layout.itemSize = CGSizeMake(self.view.frame.size.width, 44);
+    self.layout.scrollDirection = UICollectionViewScrollDirectionVertical;
     UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:self.view.frame collectionViewLayout:self.layout];
     collectionView.backgroundColor = [UIColor clearColor];
     
